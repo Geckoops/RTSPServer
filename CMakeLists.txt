@@ -11,13 +11,22 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
-include_directories(include)
-
-file(GLOB src_files src/*.cpp)
+file(GLOB SRC_NETWORK src/Network/*.cpp)
+file(GLOB SRC_THREAD src/Thread/*.cpp)
+file(GLOB SRC_EVENT src/Event/*.cpp)
 
 add_executable(${PROJECT_NAME}
-    ${src_files}
-    main.cpp
+    ${SRC_NETWORK}
+    ${SRC_THREAD}
+    ${SRC_EVENT}
+    src/main.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    include
+    src/Network
+    src/Thread
+    src/Event
 )
 
 target_link_libraries(${PROJECT_NAME}
