@@ -1,4 +1,4 @@
-﻿#include "ThreadPool.h"
+#include "ThreadPool.h"
 
 ThreadPool* ThreadPool::createNew(int num) { return new ThreadPool(num); }
 

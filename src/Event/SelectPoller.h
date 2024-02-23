@@ -1,4 +1,4 @@
-﻿#ifndef SELECTPOLLER_H
+#ifndef SELECTPOLLER_H
 #define SELECTPOLLER_H
 #include <vector>
 

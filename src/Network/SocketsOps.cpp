@@ -1,4 +1,4 @@
-﻿#include "SocketsOps.h"
+#include "SocketsOps.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -108,6 +108,41 @@ int sockets::recvfrom(int sockfd, void* buf, int len,
     return recvfrom(sockfd, (char*)buf, len, 0, srcAddr, &addr_len);
 }
 
+void sockets::initNetWork() {
+#ifdef _WIN32
+    WSADATA wsadata;
+    int s = WSAStartup(MAKEWORD(2, 2), &wsadata);
+
+    if (s != 0) {
+        switch (s) {
+            case WSASYSNOTREADY: {
+                LOGE("Reboot computer, or check your network libraries.");
+                break;
+            }
+            case WSAVERNOTSUPPORTED: {
+                LOGE("Please update the network library.");
+                break;
+            }
+            case WSAEINPROGRESS: {
+                LOGE("Please reboot computer.");
+                break;
+            }
+            case WSAEPROCLIM: {
+                LOGE(
+                    "Please disable unnecessary software to ensure that there "
+                    "are enough network resources.");
+                break;
+            }
+        }
+    }
+
+    if (HIBYTE(wsadata.wVersion) != 2 || LOBYTE(wsadata.wVersion) != 2) {
+        LOGE("Network library version error.");
+        return;
+    }
+#endif  // _WIN32
+}
+
 int sockets::setNonBlock(int sockfd) {
 #ifndef _WIN32
     int flags = fcntl(sockfd, F_GETFL, 0);
@@ -150,12 +185,12 @@ void sockets::setNonBlockAndCloseOnExec(int sockfd) {
     // non-block
     int flags = fcntl(sockfd, F_GETFL, 0);
     flags |= O_NONBLOCK;
-    int ret = fcntl(sockfd, F_SETFL, flags);
+    fcntl(sockfd, F_SETFL, flags);
 
     // close-on-exec
     flags = fcntl(sockfd, F_GETFD, 0);
     flags |= FD_CLOEXEC;
-    ret = fcntl(sockfd, F_SETFD, flags);
+    fcntl(sockfd, F_SETFD, flags);
 #endif
 }
 
@@ -193,7 +228,7 @@ int sockets::getPeerAddr(int sockfd, struct sockaddr_in* addr) {
 
 void sockets::close(int sockfd) {
 #ifndef _WIN32
-    close(sockfd);
+    ::close(sockfd);
 #else
     closesocket(sockfd);
 #endif

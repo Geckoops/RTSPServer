@@ -1,4 +1,4 @@
-﻿#ifndef SOCKETSOPS_H
+#ifndef SOCKETSOPS_H
 #define SOCKETSOPS_H
 #include <stdint.h>
 
@@ -44,6 +44,7 @@ int sendto(int sockfd, const void* buf, int len,
 int recvfrom(int sockfd, void* buf, int size, struct sockaddr* srcAddr);
 
 /* Utils */
+void initNetWork();
 bool bind(int sockfd, std::string ip, uint16_t port);
 void close(int sockfd);
 

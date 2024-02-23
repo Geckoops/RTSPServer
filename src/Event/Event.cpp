@@ -2,6 +2,7 @@
 
 #include "Log.h"
 
+
 TriggerEvent* TriggerEvent::createNew(EventCallback cb) {
     return new TriggerEvent(cb);
 }

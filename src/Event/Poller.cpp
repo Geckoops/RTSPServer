@@ -1,4 +1,4 @@
-﻿#include "Poller.h"
+#include "Poller.h"
 
 Poller::Poller() {}
 Poller::~Poller() {}

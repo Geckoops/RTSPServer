@@ -1,4 +1,4 @@
-﻿#include "Thread.h"
+#include "Thread.h"
 
 Thread::Thread() : is_start_(false), is_detach_(false) {}
 

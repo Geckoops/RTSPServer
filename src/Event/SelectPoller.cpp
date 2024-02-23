@@ -1,4 +1,4 @@
-﻿#include "SelectPoller.h"
+#include "SelectPoller.h"
 
 #include "Log.h"
 
