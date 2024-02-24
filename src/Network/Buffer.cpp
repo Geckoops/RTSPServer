@@ -11,10 +11,10 @@ const int Buffer::kInitialSize = 1024;
 const char* Buffer::kCRLF = "\r\n";
 
 Buffer::Buffer() : buffer_size_(kInitialSize), read_index_(0), write_index_(0) {
-    buffer_ = (char*)malloc(buffer_size_);
+    buffer_ = new char[buffer_size_];
 }
 
-Buffer::~Buffer() { free(buffer_); }
+Buffer::~Buffer() { delete[] buffer_; }
 
 int Buffer::read(int fd) {
     char extrabuf[65536];

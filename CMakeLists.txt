@@ -15,6 +15,7 @@ file(GLOB SRC_ENVIRONMENT src/Environment/*.cpp)
 file(GLOB SRC_NETWORK src/Network/*.cpp)
 file(GLOB SRC_THREAD src/Thread/*.cpp)
 file(GLOB SRC_EVENT src/Event/*.cpp)
+file(GLOB SRC_RTSP src/Rtsp/*.cpp)
 
 
 add_executable(${PROJECT_NAME}
@@ -22,6 +23,7 @@ add_executable(${PROJECT_NAME}
     ${SRC_NETWORK}
     ${SRC_THREAD}
     ${SRC_EVENT}
+    ${SRC_RTSP}
     src/main.cpp
 )
 
@@ -31,6 +33,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/Network
     src/Thread
     src/Event
+    src/Rtsp
 )
 
 target_link_libraries(${PROJECT_NAME}
