@@ -52,10 +52,10 @@ class RtpPacket {
     ~RtpPacket();
 
    public:
-    uint8_t* buf;   // 4+rtp_header+rtpBody
-    uint8_t* buf4;  // rtp_header+rtpBody
+    uint8_t* buf;   // 4+rtp_header+rtp_body
+    uint8_t* buf4;  // rtp_header+rtp_body
     RtpHeader* const rtp_header;
-    int size;  // rtp_header+rtpBody
+    int size;  // rtp_header+rtp_body
 };
 
 void parseRtpHeader(uint8_t* buf, struct RtpHeader* rtp_header);

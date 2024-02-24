@@ -11,6 +11,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
+file(GLOB SRC_MEDIA_SESSION src/MediaSession/*.cpp)
 file(GLOB SRC_ENVIRONMENT src/Environment/*.cpp)
 file(GLOB SRC_NETWORK src/Network/*.cpp)
 file(GLOB SRC_THREAD src/Thread/*.cpp)
@@ -19,6 +20,7 @@ file(GLOB SRC_RTSP src/Rtsp/*.cpp)
 
 
 add_executable(${PROJECT_NAME}
+    ${SRC_MEDIA_SESSION}
     ${SRC_ENVIRONMENT}
     ${SRC_NETWORK}
     ${SRC_THREAD}
@@ -29,6 +31,7 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     include
+    src/MediaSession
     src/Environment
     src/Network
     src/Thread
@@ -39,7 +42,3 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME}
     ws2_32
 )
-
-# target_link_libraries(${PROJECT_NAME}
-#     pthread
-# )

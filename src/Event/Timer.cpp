@@ -2,7 +2,7 @@
 #ifndef _WIN32
 #include <sys/timerfd.h>
 
-#include "Log.h"
+#include "../Base/Log.h"
 #include "Poller.h"
 
 
@@ -84,7 +84,9 @@ bool Timer::handleEvent() {
 }
 
 TimerManager* TimerManager::createNew(EventScheduler* scheduler) {
-    if (!scheduler) return NULL;
+    if (!scheduler) {
+        return NULL;
+    }
     return new TimerManager(scheduler);
 }
 

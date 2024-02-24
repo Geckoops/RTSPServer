@@ -10,6 +10,7 @@ TriggerEvent* TriggerEvent::createNew(EventCallback cb) {
 TriggerEvent::TriggerEvent(EventCallback cb) : trigger_callback_(cb) {
     LOGI("TriggerEvent()");
 }
+
 TriggerEvent::~TriggerEvent() { LOGI("~TriggerEvent()"); }
 
 void TriggerEvent::handleEvent() {
@@ -26,6 +27,7 @@ TimerEvent::TimerEvent(EventCallback cb)
     : timeout_callback_(cb), is_stop_(false) {
     LOGI("TimerEvent()");
 }
+
 TimerEvent::~TimerEvent() { LOGI("~TimerEvent()"); }
 
 bool TimerEvent::handleEvent() {
@@ -39,6 +41,7 @@ bool TimerEvent::handleEvent() {
 
     return is_stop_;
 }
+
 void TimerEvent::stop() { is_stop_ = true; }
 
 IOEvent* IOEvent::createNew(int fd) {
@@ -58,6 +61,7 @@ IOEvent::IOEvent(int fd)
       error_callback_(NULL) {
     LOGI("IOEvent() fd=%d", fd_);
 }
+
 IOEvent::~IOEvent() { LOGI("~IOEvent() fd=%d", fd_); }
 
 void IOEvent::handleEvent() {
