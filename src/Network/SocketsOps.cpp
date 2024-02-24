@@ -25,7 +25,7 @@ int sockets::createTcpSock() {
     int ret = ioctlsocket(sockfd, FIONBIO, (unsigned long*)&ul);
 
     if (ret == SOCKET_ERROR) {
-        LOGE("设置非阻塞失败");
+        LOGE("Failed to set non-blocking mode.");
     }
 #endif
 
@@ -41,7 +41,7 @@ int sockets::createUdpSock() {
     int ret = ioctlsocket(sockfd, FIONBIO, (unsigned long*)&ul);
 
     if (ret == SOCKET_ERROR) {
-        LOGE("设置非阻塞失败");
+        LOGE("Failed to set non-blocking mode.");
     }
 #endif
 
@@ -55,7 +55,7 @@ bool sockets::bind(int sockfd, std::string ip, uint16_t port) {
     addr.sin_port = htons(port);
 
     if (::bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        LOGE("::bind error, fd=%d, ip=%s, port=%d", sockfd, ip.c_str(), port);
+        LOGE("bind error, fd=%d, ip=%s, port=%d", sockfd, ip.c_str(), port);
         return false;
     }
     return true;
@@ -63,7 +63,7 @@ bool sockets::bind(int sockfd, std::string ip, uint16_t port) {
 
 bool sockets::listen(int sockfd, int backlog) {
     if (::listen(sockfd, backlog) < 0) {
-        LOGE("::listen error, fd=%d, backlog=%d", sockfd, backlog);
+        LOGE("listen error, fd=%d, backlog=%d", sockfd, backlog);
         return false;
     }
     return true;

@@ -13,21 +13,21 @@ class ThreadPool {
     class Task {
        public:
         using TaskCallback = std::function<void()>;
-        Task(TaskCallback cb) : mTaskCallback(cb){};
+        Task(TaskCallback cb) : task_callback_(cb){};
 
-        void setTaskCallback(TaskCallback cb) { mTaskCallback = cb; }
+        void setTaskCallback(TaskCallback cb) { task_callback_ = cb; }
 
-        void handle() { mTaskCallback(); }
+        void handle() { task_callback_(); }
 
         Task& operator=(const Task& task) {
             if (this != &task) {
-                this->mTaskCallback = task.mTaskCallback;
+                this->task_callback_ = task.task_callback_;
             }
             return *this;
         }
 
        private:
-        TaskCallback mTaskCallback;
+        TaskCallback task_callback_;
     };
 
     static ThreadPool* createNew(int num);
