@@ -11,6 +11,8 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
+file(GLOB SRC_MEDIA_STREAM_H264 src/MediaStream/H264/*.cpp)
+file(GLOB SRC_MEDIA_STREAM_AAC src/MediaStream/AAC/*.cpp)
 file(GLOB SRC_MEDIA_SESSION src/MediaSession/*.cpp)
 file(GLOB SRC_ENVIRONMENT src/Environment/*.cpp)
 file(GLOB SRC_NETWORK src/Network/*.cpp)
@@ -20,6 +22,8 @@ file(GLOB SRC_RTSP src/Rtsp/*.cpp)
 
 
 add_executable(${PROJECT_NAME}
+    ${SRC_MEDIA_STREAM_H264}
+    ${SRC_MEDIA_STREAM_AAC}
     ${SRC_MEDIA_SESSION}
     ${SRC_ENVIRONMENT}
     ${SRC_NETWORK}
@@ -31,6 +35,8 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     include
+    src/MediaStream/H264
+    src/MediaStream/AAC
     src/MediaSession
     src/Environment
     src/Network
