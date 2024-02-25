@@ -30,6 +30,8 @@ void ThreadPool::createThreads() {
 
                 Task task = tasks_.front();
                 tasks_.pop();
+                
+                lck.unlock();
 
                 task.handle();
             }

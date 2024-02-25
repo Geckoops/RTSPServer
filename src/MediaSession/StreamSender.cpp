@@ -7,7 +7,7 @@ StreamSender::StreamSender(UsageEnvironment* env, MediaFileReader* media_reader,
                            int payload_type)
     : env_(env),
       media_reader_(media_reader),
-      session_send_packet_(NULL),
+      session_send_packet_(nullptr),
       csrc_len_(0),
       extension_(0),
       padding_(0),
@@ -53,7 +53,7 @@ void StreamSender::sendRtpPacket(RtpPacket* packet) {
 
 void StreamSender::handleTimeout() {
     MediaFrame* frame = media_reader_->getFrameFromOutputQueue();
-    if (!frame) {
+    if (frame == nullptr) {
         return;
     }
     this->sendFrame(frame);  // 由具体子类实现发送逻辑

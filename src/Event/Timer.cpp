@@ -2,9 +2,8 @@
 #ifndef _WIN32
 #include <sys/timerfd.h>
 
-#include "../Base/Log.h"
+#include "Log.h"
 #include "Poller.h"
-
 
 #endif  //_WIN32
 #include <time.h>
@@ -29,28 +28,28 @@
 #ifndef _WIN32
 static bool timerFdSetTime(int fd, Timer::Timestamp when,
                            Timer::TimeInterval period) {
-    struct itimerspec newVal;
+    struct itimerspec new_val;
 
-    newVal.it_value.tv_sec = when / 1000;                 // ms->s
-    newVal.it_value.tv_nsec = when % 1000 * 1000 * 1000;  // ms->ns
-    newVal.it_interval.tv_sec = period / 1000;
-    newVal.it_interval.tv_nsec = period % 1000 * 1000 * 1000;
+    new_val.it_value.tv_sec = when / 1000;                 // ms->s
+    new_val.it_value.tv_nsec = when % 1000 * 1000 * 1000;  // ms->ns
+    new_val.it_interval.tv_sec = period / 1000;
+    new_val.it_interval.tv_nsec = period % 1000 * 1000 * 1000;
 
-    int oldValue = timerfd_settime(fd, TFD_TIMER_ABSTIME, &newVal, NULL);
-    if (oldValue < 0) {
+    int old_value = timerfd_settime(fd, TFD_TIMER_ABSTIME, &new_val, nullptr);
+    if (old_value < 0) {
         return false;
     }
     return true;
 }
 #endif  //_WIN32
 
-Timer::Timer(TimerEvent* event, Timestamp timestamp, TimeInterval timeInterval,
-             TimerId timerId)
+Timer::Timer(TimerEvent* event, Timestamp timestamp, TimeInterval time_interval,
+             TimerId timer_id)
     : timer_event_(event),
       timestamp_(timestamp),
-      timer_interval_(timeInterval),
-      timer_id_(timerId) {
-    if (timeInterval > 0) {
+      timer_interval_(time_interval),
+      timer_id_(timer_id) {
+    if (time_interval > 0) {
         repeat_ = true;  // 循环定时器
     } else {
         repeat_ = false;  // 一次性定时器
@@ -77,15 +76,15 @@ Timer::Timestamp Timer::getCurTimestamp() {
 }
 
 bool Timer::handleEvent() {
-    if (!timer_event_) {
+    if (timer_event_ == nullptr) {
         return false;
     }
     return timer_event_->handleEvent();
 }
 
 TimerManager* TimerManager::createNew(EventScheduler* scheduler) {
-    if (!scheduler) {
-        return NULL;
+    if (scheduler == nullptr) {
+        return nullptr;
     }
     return new TimerManager(scheduler);
 }
@@ -121,9 +120,9 @@ TimerManager::~TimerManager() {
 
 Timer::TimerId TimerManager::addTimer(TimerEvent* event,
                                       Timer::Timestamp timestamp,
-                                      Timer::TimeInterval timeInterval) {
+                                      Timer::TimeInterval time_interval) {
     ++last_timer_id_;
-    Timer timer(event, timestamp, timeInterval, last_timer_id_);
+    Timer timer(event, timestamp, time_interval, last_timer_id_);
 
     timers_.insert({last_timer_id_, timer});
     events_.insert({timestamp, timer});
@@ -132,10 +131,10 @@ Timer::TimerId TimerManager::addTimer(TimerEvent* event,
     return last_timer_id_;
 }
 
-bool TimerManager::removeTimer(Timer::TimerId timerId) {
-    auto it = timers_.find(timerId);
+bool TimerManager::removeTimer(Timer::TimerId timer_id) {
+    auto it = timers_.find(timer_id);
     if (it != timers_.end()) {
-        timers_.erase(timerId);
+        timers_.erase(timer_id);
         // TODO 还需要删除mEvents的事件
     }
 
@@ -164,7 +163,7 @@ void TimerManager::handleRead() {
         Timer timer = it->second;
         int expire = timer.timestamp_ - timestamp;
 
-        // LOGI("timestamp=%d,timestamp_=%d,expire=%d,timeInterval=%d",
+        // LOGI("timestamp=%d,timestamp_=%d,expire=%d,time_interval=%d",
         // timestamp, timer.timestamp_, expire, timer.timer_interval_);
 
         if (timestamp > timer.timestamp_ || expire == 0) {

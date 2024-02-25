@@ -7,12 +7,14 @@
 
 #ifndef _WIN32
 #include <sys/eventfd.h>
+
 #include "SocketsOps.h"
 #endif  //_WIN32
 
 EventScheduler* EventScheduler::createNew(PollerType type) {
-    if (type != POLLER_SELECT && type != POLLER_POLL && type != POLLER_EPOLL)
-        return NULL;
+    if (type != POLLER_SELECT && type != POLLER_POLL && type != POLLER_EPOLL) {
+        return nullptr;
+    }
 
     return new EventScheduler(type);
 }
@@ -35,7 +37,7 @@ EventScheduler::EventScheduler(PollerType type) : quit_(false) {
             exit(-1);
             break;
     }
-    
+
     timer_manager_ = TimerManager::createNew(this);
     // WIN系统的定时器回调由子线程托管，非WIN系统则通过select网络模型
 }

@@ -25,8 +25,8 @@ MediaSession::MediaSession(const std::string& session_name)
     tracks_[1].is_alive = false;
 
     for (int i = 0; i < MEDIA_MAX_TRACK_NUM; ++i) {
-        multicast_rtp_instances_[i] = NULL;
-        multicast_rtcp_instances_[i] = NULL;
+        multicast_rtp_instances_[i] = nullptr;
+        multicast_rtcp_instances_[i] = nullptr;
     }
 }
 
@@ -63,7 +63,7 @@ std::string MediaSession::generateSDPDescription() {
              "t=0 0\r\n"
              "a=control:*\r\n"
              "a=type:broadcast\r\n",
-             (long)time(NULL), ip.c_str());
+             (long)time(nullptr), ip.c_str());
 
     if (isStartMulticast()) {
         snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
@@ -109,20 +109,23 @@ MediaSession::Track* MediaSession::getTrack(MediaSession::TrackId track_id) {
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
-bool MediaSession::addStreamSender(MediaSession::TrackId track_id, StreamSender* stream_sender) {
+bool MediaSession::addStreamSender(MediaSession::TrackId track_id,
+                                   StreamSender* stream_sender) {
     Track* track = getTrack(track_id);
 
-    if (!track) {
+    if (track == nullptr) {
         return false;
     }
 
     track->stream_sender = stream_sender;
     track->is_alive = true;
+
     stream_sender->setSessionCb(
-        [this, track](RtpPacket* rtp_packet, StreamSender::PacketType packet_type) {
+        [this, track](RtpPacket* rtp_packet,
+                      StreamSender::PacketType packet_type) {
             if (packet_type == StreamSender::PacketType::RTPPACKET) {
                 this->handleSendRtpPacket(track, rtp_packet);
             }
@@ -133,7 +136,7 @@ bool MediaSession::addStreamSender(MediaSession::TrackId track_id, StreamSender*
 bool MediaSession::addRtpInstance(MediaSession::TrackId track_id,
                                   RtpInstance* rtp_instance) {
     Track* track = getTrack(track_id);
-    if (!track || track->is_alive != true) {
+    if (track == nullptr || track->is_alive != true) {
         return false;
     }
 
@@ -163,8 +166,6 @@ bool MediaSession::removeRtpInstance(RtpInstance* rtp_instance) {
 
 void MediaSession::handleSendRtpPacket(MediaSession::Track* track,
                                        RtpPacket* rtp_packet) {
-    //    LOGI("");
-
     for (auto& rtp_instance : track->rtp_instances) {
         if (rtp_instance->isAlive()) {
             rtp_instance->send(rtp_packet);
@@ -197,7 +198,9 @@ bool MediaSession::startMulticast() {
     assert(rtcpSockfd2 > 0);
 
     uint16_t port = rand() & 0xfffe;
-    if (port < 10000) port += 10000;
+    if (port < 10000) {
+        port += 10000;
+    }
 
     rtpPort1 = port;
     rtcpPort1 = port + 1;
@@ -226,7 +229,7 @@ bool MediaSession::startMulticast() {
 bool MediaSession::isStartMulticast() { return is_start_multicast_; }
 
 uint16_t MediaSession::getMulticastDestRtpPort(TrackId track_id) {
-    if (track_id > TrackId1 || !multicast_rtp_instances_[track_id]) {
+    if (track_id > TrackId1 || multicast_rtp_instances_[track_id] == nullptr) {
         return -1;
     }
 

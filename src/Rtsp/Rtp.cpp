@@ -10,7 +10,7 @@ RtpPacket::RtpPacket()
 
 RtpPacket::~RtpPacket() {
     delete[] buf;
-    buf = NULL;
+    buf = nullptr;
 }
 
 void parseRtpHeader(uint8_t* buf, struct RtpHeader* rtp_header) {

@@ -46,7 +46,7 @@ void TimerEvent::stop() { is_stop_ = true; }
 
 IOEvent* IOEvent::createNew(int fd) {
     if (fd < 0) {
-        return NULL;
+        return nullptr;
     }
 
     return new IOEvent(fd);
@@ -56,9 +56,9 @@ IOEvent::IOEvent(int fd)
     : fd_(fd),
       event_(EVENT_NONE),
       r_event_(EVENT_NONE),
-      read_callback_(NULL),
-      write_callback_(NULL),
-      error_callback_(NULL) {
+      read_callback_(nullptr),
+      write_callback_(nullptr),
+      error_callback_(nullptr) {
     LOGI("IOEvent() fd=%d", fd_);
 }
 

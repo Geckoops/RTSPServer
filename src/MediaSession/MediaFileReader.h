@@ -1,5 +1,5 @@
-#ifndef MEDIASOURCE_H
-#define MEDIASOURCE_H
+#ifndef MEDIAFILEREADER_H
+#define MEDIAFILEREADER_H
 #include <stdint.h>
 
 #include <mutex>
@@ -29,12 +29,10 @@ class MediaFileReader {
 
     MediaFrame* getFrameFromOutputQueue();         // 从输出队列获取帧
     void putFrameToInputQueue(MediaFrame* frame);  // 把帧送入输入队列
-    int getFps() const { return fps_; }
     std::string getFileName() { return file_name_; }
 
    protected:
     virtual void handleTask() = 0;
-    void setFps(int fps) { fps_ = fps; }
 
    protected:
     UsageEnvironment* env_;
@@ -44,7 +42,6 @@ class MediaFileReader {
 
     std::mutex mtx_;
     ThreadPool::Task task_;
-    int fps_;
     std::string file_name_;
 };
-#endif  // MEDIASOURCE_H
+#endif  // MEDIAFILEREADER_H

@@ -17,19 +17,19 @@ Buffer::Buffer() : buffer_size_(kInitialSize), read_index_(0), write_index_(0) {
 Buffer::~Buffer() { delete[] buffer_; }
 
 int Buffer::read(int fd) {
-    char extrabuf[65536];
+    char recv_buf[65536];
     const int writable = writableBytes();
-    const int n = sockets::recv(fd, extrabuf, sizeof(extrabuf));
+    const int n = sockets::recv(fd, recv_buf, sizeof(recv_buf));
     if (n <= 0) {
         return -1;
     } else if (n <= writable) {
-        std::copy(extrabuf, extrabuf + n, beginWrite());
+        std::copy(recv_buf, recv_buf + n, beginWrite());
         write_index_ += n;
 
     } else {
-        std::copy(extrabuf, extrabuf + writable, beginWrite());
+        std::copy(recv_buf, recv_buf + writable, beginWrite());
         write_index_ += writable;
-        append(extrabuf + writable, n - writable);
+        append(recv_buf + writable, n - writable);
     }
     return n;
 }
@@ -48,19 +48,19 @@ const char* Buffer::peek() const { return begin() + read_index_; }
 
 const char* Buffer::findCRLF() const {
     const char* crlf = std::search(peek(), beginWrite(), kCRLF, kCRLF + 2);
-    return crlf == beginWrite() ? NULL : crlf;
+    return crlf == beginWrite() ? nullptr : crlf;
 }
 
 const char* Buffer::findCRLF(const char* start) const {
     assert(peek() <= start);
     assert(start <= beginWrite());
     const char* crlf = std::search(start, beginWrite(), kCRLF, kCRLF + 2);
-    return crlf == beginWrite() ? NULL : crlf;
+    return crlf == beginWrite() ? nullptr : crlf;
 }
 
 const char* Buffer::findLastCrlf() const {
     const char* crlf = std::find_end(peek(), beginWrite(), kCRLF, kCRLF + 2);
-    return crlf == beginWrite() ? NULL : crlf;
+    return crlf == beginWrite() ? nullptr : crlf;
 }
 
 void Buffer::retrieveReadZero() {  // 本次读取的数据不全，重新从头读取

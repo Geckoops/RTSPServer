@@ -3,8 +3,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 
-#include "Log.h"
-
 #ifndef _WIN32
 #include <arpa/inet.h>
 #include <net/if.h>
@@ -13,6 +11,7 @@
 #include <unistd.h>
 
 #endif  //_WIN32
+#include "Log.h"
 
 int sockets::createTcpSock() {
 #ifndef _WIN32
@@ -25,7 +24,7 @@ int sockets::createTcpSock() {
     int ret = ioctlsocket(sockfd, FIONBIO, (unsigned long*)&ul);
 
     if (ret == SOCKET_ERROR) {
-        LOGE("Failed to set non-blocking mode.");
+        LOGE("设置非阻塞失败");
     }
 #endif
 
@@ -41,7 +40,7 @@ int sockets::createUdpSock() {
     int ret = ioctlsocket(sockfd, FIONBIO, (unsigned long*)&ul);
 
     if (ret == SOCKET_ERROR) {
-        LOGE("Failed to set non-blocking mode.");
+        LOGE("设置非阻塞失败");
     }
 #endif
 
@@ -55,7 +54,7 @@ bool sockets::bind(int sockfd, std::string ip, uint16_t port) {
     addr.sin_port = htons(port);
 
     if (::bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        LOGE("bind error, fd=%d, ip=%s, port=%d", sockfd, ip.c_str(), port);
+        LOGE("::bind error, fd=%d, ip=%s, port=%d", sockfd, ip.c_str(), port);
         return false;
     }
     return true;
@@ -63,7 +62,7 @@ bool sockets::bind(int sockfd, std::string ip, uint16_t port) {
 
 bool sockets::listen(int sockfd, int backlog) {
     if (::listen(sockfd, backlog) < 0) {
-        LOGE("listen error, fd=%d, backlog=%d", sockfd, backlog);
+        LOGE("::listen error, fd=%d, backlog=%d", sockfd, backlog);
         return false;
     }
     return true;
@@ -252,7 +251,7 @@ bool sockets::connect(int sockfd, std::string ip, uint16_t port, int timeout) {
             FD_ZERO(&fd_write);
             FD_SET(sockfd, &fd_write);
             struct timeval tv = {timeout / 1000, timeout % 1000 * 1000};
-            select(sockfd + 1, NULL, &fd_write, NULL, &tv);
+            select(sockfd + 1, nullptr, &fd_write, nullptr, &tv);
             if (FD_ISSET(sockfd, &fd_write)) {
                 is_connected = true;
             }
