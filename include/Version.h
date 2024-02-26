@@ -1,6 +1,6 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define PROJECT_VERSION "RTSPSERVER"
+#define PROJECT_VERSION "RTSPSERVER_V1.0.0"
 
 #endif //VERSION_H
