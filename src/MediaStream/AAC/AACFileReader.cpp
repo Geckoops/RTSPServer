@@ -1,4 +1,4 @@
-﻿#include "AACFileReader.h"
+#include "AACFileReader.h"
 
 #include <string.h>
 

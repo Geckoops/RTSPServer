@@ -1,4 +1,4 @@
-﻿#include "H264StreamSender.h"
+#include "H264StreamSender.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -20,7 +20,7 @@ H264StreamSender::H264StreamSender(UsageEnvironment* env,
       clock_rate_(kH264ClockRate),
       fps_(fps) {
     LOGI("H264StreamSender()");
-    runEvery(30);
+    runEvery(1000 / fps);
 }
 
 H264StreamSender::~H264StreamSender() { LOGI("~H264StreamSender()"); }

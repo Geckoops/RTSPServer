@@ -1,4 +1,4 @@
-﻿#include "H264FileReader.h"
+#include "H264FileReader.h"
 
 #include <fcntl.h>
 

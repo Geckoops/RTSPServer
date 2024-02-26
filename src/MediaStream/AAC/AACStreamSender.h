@@ -1,4 +1,4 @@
-﻿#ifndef AACSTREAMSENDER_H
+#ifndef AACSTREAMSENDER_H
 #define AACSTREAMSENDER_H
 
 #include "UsageEnvironment.h"
