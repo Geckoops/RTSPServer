@@ -1,8 +1,8 @@
 #include "Log.h"
-#include "AACFileReader.h"
-#include "AACStreamSender.h"
-#include "H264FileReader.h"
-#include "H264StreamSender.h"
+#include "AACMediaSource.h"
+#include "AACMediaSink.h"
+#include "H264MediaSource.h"
+#include "H264MediaSink.h"
 #include "MediaSession.h"
 #include "MediaSessionManager.h"
 #include "RtspServer.h"
@@ -27,15 +27,15 @@ int main() {
     LOGI("----------session init start------");
     {
         MediaSession* session = MediaSession::createNew("test");
-        MediaFileReader* reader =
-            H264FileReader::createNew(env, "../res/output.h264");
-        StreamSender* stream_sender =
-            H264StreamSender::createNew(env, reader, 23.976);
-        session->addStreamSender(MediaSession::TrackId0, stream_sender);
+        MediaSource* source =
+            H264MediaSource::createNew(env, "../res/output.h264");
+        Sink* sink =
+            H264MediaSink::createNew(env, source, 23.976);
+        session->addSink(MediaSession::TrackId0, sink);
 
-        reader = AACFileReader::createNew(env, "../res/output.aac");
-        stream_sender = AACStreamSender::createNew(env, reader, 48000, 2);
-        session->addStreamSender(MediaSession::TrackId1, stream_sender);
+        source = AACMediaSource::createNew(env, "../res/output.aac");
+        sink = AACMediaSink::createNew(env, source, 48000, 2);
+        session->addSink(MediaSession::TrackId1, sink);
 
         // session->startMulticast(); //多播
         session_manger->addSession(session);

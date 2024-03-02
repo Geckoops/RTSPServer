@@ -1,4 +1,4 @@
-#include "H264FileReader.h"
+#include "H264MediaSource.h"
 
 #include <fcntl.h>
 
@@ -7,13 +7,13 @@
 static inline bool startCode3(uint8_t* buf);
 static inline bool startCode4(uint8_t* buf);
 
-H264FileReader* H264FileReader::createNew(UsageEnvironment* env,
-                                          const std::string& file) {
-    return new H264FileReader(env, file);
+H264MediaSource* H264MediaSource::createNew(UsageEnvironment* env,
+                                            const std::string& file) {
+    return new H264MediaSource(env, file);
 }
 
-H264FileReader::H264FileReader(UsageEnvironment* env, const std::string& file)
-    : MediaFileReader(env) {
+H264MediaSource::H264MediaSource(UsageEnvironment* env, const std::string& file)
+    : MediaSource(env) {
     file_name_ = file;
     file_ = fopen(file.c_str(), "rb");
     if (file_ == nullptr) {
@@ -26,12 +26,12 @@ H264FileReader::H264FileReader(UsageEnvironment* env, const std::string& file)
     }
 }
 
-H264FileReader::~H264FileReader() {
+H264MediaSource::~H264MediaSource() {
     LOGI("File closed: %s", file_name_.c_str());
     fclose(file_);
 }
 
-void H264FileReader::handleTask() {
+void H264MediaSource::handleTask() {
     std::lock_guard<std::mutex> lck(mtx_);
 
     if (frame_input_queue_.empty()) {
@@ -110,7 +110,7 @@ static uint8_t* findNextStartCode(uint8_t* buf, int len) {
     return nullptr;
 }
 
-int H264FileReader::getFrameFromH264File(uint8_t* frame, unsigned int size) {
+int H264MediaSource::getFrameFromH264File(uint8_t* frame, unsigned int size) {
     if (file_ == nullptr) {
         LOGE("Read %s error, file not open", file_name_.c_str());
         return -1;

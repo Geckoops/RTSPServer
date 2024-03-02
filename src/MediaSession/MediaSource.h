@@ -1,5 +1,5 @@
-#ifndef MEDIAFILEREADER_H
-#define MEDIAFILEREADER_H
+#ifndef MEDIASOURCE_H
+#define MEDIASOURCE_H
 #include <stdint.h>
 
 #include <mutex>
@@ -22,10 +22,10 @@ class MediaFrame {
     int size;
 };
 
-class MediaFileReader {
+class MediaSource {
    public:
-    explicit MediaFileReader(UsageEnvironment* env);
-    virtual ~MediaFileReader();
+    explicit MediaSource(UsageEnvironment* env);
+    virtual ~MediaSource();
 
     MediaFrame* getFrameFromOutputQueue();         // 从输出队列获取帧
     void putFrameToInputQueue(MediaFrame* frame);  // 把帧送入输入队列
@@ -44,4 +44,4 @@ class MediaFileReader {
     ThreadPool::Task task_;
     std::string file_name_;
 };
-#endif  // MEDIAFILEREADER_H
+#endif  // MEDIASOURCE_H

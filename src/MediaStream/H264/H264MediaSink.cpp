@@ -1,4 +1,4 @@
-#include "H264StreamSender.h"
+#include "H264MediaSink.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -9,31 +9,30 @@
 // 时钟频率
 static const int kH264ClockRate = 90000;
 
-H264StreamSender* H264StreamSender::createNew(UsageEnvironment* env,
-                                              MediaFileReader* media_reader,
-                                              double fps) {
-    return new H264StreamSender(env, media_reader, fps);
+H264MediaSink* H264MediaSink::createNew(UsageEnvironment* env,
+                                        MediaSource* media_source, double fps) {
+    return new H264MediaSink(env, media_source, fps);
 }
 
-H264StreamSender::H264StreamSender(UsageEnvironment* env,
-                                   MediaFileReader* media_reader, double fps)
-    : StreamSender(env, media_reader, RTP_PAYLOAD_TYPE_H264),
+H264MediaSink::H264MediaSink(UsageEnvironment* env, MediaSource* media_source,
+                             double fps)
+    : Sink(env, media_source, RTP_PAYLOAD_TYPE_H264),
       clock_rate_(kH264ClockRate),
       fps_(fps) {
-    LOGI("H264StreamSender()");
+    LOGI("H264MediaSink()");
     runEvery(1000 / fps);
 }
 
-H264StreamSender::~H264StreamSender() { LOGI("~H264StreamSender()"); }
+H264MediaSink::~H264MediaSink() { LOGI("~H264MediaSink()"); }
 
-std::string H264StreamSender::getMediaDescription(uint16_t port) {
+std::string H264MediaSink::getMediaDescription(uint16_t port) {
     char buf[100] = {0};
     sprintf(buf, "m=video %hu RTP/AVP %d", port, payload_type_);
 
     return buf;
 }
 
-std::string H264StreamSender::getAttribute() {
+std::string H264MediaSink::getAttribute() {
     char buf[200] = {0};
     sprintf(buf, "a=rtpmap:%d H264/%d\r\n", payload_type_, clock_rate_);
     sprintf(buf + strlen(buf), "a=framerate:%.3lf\r\n", fps_);
@@ -43,7 +42,7 @@ std::string H264StreamSender::getAttribute() {
     return buf;
 }
 
-void H264StreamSender::sendFrame(MediaFrame* frame) {
+void H264MediaSink::sendFrame(MediaFrame* frame) {
     // 发送RTP数据包
     RtpHeader* rtp_header = rtp_packet_.rtp_header;
     uint8_t nalu_type = frame->buf[0];
@@ -91,7 +90,7 @@ void H264StreamSender::sendFrame(MediaFrame* frame) {
             if (i == 0) {                        // 第一包数据
                 rtp_header->payload[1] |= 0x80;  // start
             } else if (ramain_pkt_size == 0 &&
-                       i == pkt_num - 1) {        // 最后一包数据
+                       i == pkt_num - 1) {       // 最后一包数据
                 rtp_header->payload[1] |= 0x40;  // end
             }
 
@@ -120,15 +119,15 @@ void H264StreamSender::sendFrame(MediaFrame* frame) {
     timestamp_ += clock_rate_ / fps_;
 }
 
-std::string H264StreamSender::getSPSInfo() {
-    if(sps_info_.empty()) {
+std::string H264MediaSink::getSPSInfo() {
+    if (sps_info_.empty()) {
         return "Z2QAH6xyiQNg95//wKAAn9qAgICgAAB9IAAXcBHjBhRM";
     }
     return sps_info_;
 }
 
-std::string H264StreamSender::getPPSInfo() {
-    if(pps_info_.empty()) {
+std::string H264MediaSink::getPPSInfo() {
+    if (pps_info_.empty()) {
         return "aOk7yw==";
     }
     return pps_info_;

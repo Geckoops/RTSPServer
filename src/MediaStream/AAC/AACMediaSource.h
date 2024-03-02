@@ -1,16 +1,17 @@
-#ifndef AACFILEREADER_H
-#define AACFILEREADER_H
+#ifndef AACMEDIASOURCE_H
+#define AACMEDIASOURCE_H
+
 #include <string>
 
-#include "MediaFileReader.h"
+#include "MediaSource.h"
 
-class AACFileReader : public MediaFileReader {
+class AACMediaSource : public MediaSource {
    public:
-    static AACFileReader* createNew(UsageEnvironment* env,
-                                    const std::string& file);
+    static AACMediaSource* createNew(UsageEnvironment* env,
+                                     const std::string& file);
 
-    AACFileReader(UsageEnvironment* env, const std::string& file);
-    virtual ~AACFileReader();
+    AACMediaSource(UsageEnvironment* env, const std::string& file);
+    virtual ~AACMediaSource();
 
    protected:
     virtual void handleTask();
@@ -26,8 +27,8 @@ class AACFileReader : public MediaFileReader {
         unsigned int sampling_freq_index;  // 4 bit 表示使用的采样频率
         unsigned int private_bit;          // 1 bit 未使用
         unsigned int channel_cfg;          // 3 bit 表示声道数
-        unsigned int original_copy;        // 1 bit 1表示为原始，0表示为副本
-        unsigned int home;                 // 1 bit 未使用
+        unsigned int original_copy;  // 1 bit 1表示为原始，0表示为副本
+        unsigned int home;           // 1 bit 未使用
 
         /*下面的为改变的参数即每一帧都不同*/
         unsigned int copyright_identification_bit;    // 1 bit 未使用
@@ -52,4 +53,4 @@ class AACFileReader : public MediaFileReader {
     struct AdtsHeader adts_header_;
 };
 
-#endif  // AACFILEREADER_H
+#endif  // AACMEDIASOURCE_H

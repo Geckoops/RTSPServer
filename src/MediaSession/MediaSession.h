@@ -4,7 +4,7 @@
 #include <list>
 
 #include "RtpInstance.h"
-#include "StreamSender.h"
+#include "Sink.h"
 
 #define MEDIA_MAX_TRACK_NUM 2
 
@@ -26,7 +26,7 @@ public:
 
     std::string name() const { return session_name_; }
     std::string generateSDPDescription();
-    bool addStreamSender(MediaSession::TrackId track_id, StreamSender* stream_sender);
+    bool addSink(MediaSession::TrackId track_id, Sink* sink);
 
     bool addRtpInstance(MediaSession::TrackId track_id, RtpInstance* rtp_instance);
     bool removeRtpInstance(RtpInstance* rtp_instance);
@@ -40,7 +40,7 @@ public:
 private:
     class Track {
     public:
-        StreamSender* stream_sender;
+        Sink* sink;
         int track_id;
         bool is_alive;
         std::list<RtpInstance*> rtp_instances;

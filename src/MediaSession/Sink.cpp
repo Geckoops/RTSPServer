@@ -1,12 +1,12 @@
-#include "StreamSender.h"
+#include "Sink.h"
 
 #include "Log.h"
 #include "SocketsOps.h"
 
-StreamSender::StreamSender(UsageEnvironment* env, MediaFileReader* media_reader,
+Sink::Sink(UsageEnvironment* env, MediaSource* media_source,
                            int payload_type)
     : env_(env),
-      media_reader_(media_reader),
+      media_source_(media_source),
       session_send_packet_(nullptr),
       csrc_len_(0),
       extension_(0),
@@ -18,23 +18,23 @@ StreamSender::StreamSender(UsageEnvironment* env, MediaFileReader* media_reader,
       timestamp_(0),
       ssrc_(rand()),
       timer_id_(0) {
-    LOGI("StreamSender()");
+    LOGI("Sink()");
     timer_event_ = TimerEvent::createNew([this]() { this->handleTimeout(); });
 }
 
-StreamSender::~StreamSender() {
-    LOGI("~StreamSender()");
+Sink::~Sink() {
+    LOGI("~Sink()");
 
     delete timer_event_;
-    delete media_reader_;
+    delete media_source_;
 }
-void StreamSender::stopTimerEvent() { timer_event_->stop(); }
+void Sink::stopTimerEvent() { timer_event_->stop(); }
 
-void StreamSender::setSessionCb(SessionSendPacketCallback cb) {
+void Sink::setSessionCb(SessionSendPacketCallback cb) {
     session_send_packet_ = cb;
 }
 
-void StreamSender::sendRtpPacket(RtpPacket* packet) {
+void Sink::sendRtpPacket(RtpPacket* packet) {
     RtpHeader* rtp_header = packet->rtp_header;
     rtp_header->csrc_len = csrc_len_;
     rtp_header->extension = extension_;
@@ -51,18 +51,18 @@ void StreamSender::sendRtpPacket(RtpPacket* packet) {
     }
 }
 
-void StreamSender::handleTimeout() {
-    MediaFrame* frame = media_reader_->getFrameFromOutputQueue();
+void Sink::handleTimeout() {
+    MediaFrame* frame = media_source_->getFrameFromOutputQueue();
     if (frame == nullptr) {
         return;
     }
     this->sendFrame(frame);  // 由具体子类实现发送逻辑
 
     // 将使用过的frame插入输入队列，插入输入队列以后，加入一个子线程task，从文件中读取数据再次将输入写入到frame队列中
-    media_reader_->putFrameToInputQueue(frame);
+    media_source_->putFrameToInputQueue(frame);
 }
 
-void StreamSender::runEvery(int interval) {
+void Sink::runEvery(int interval) {
     timer_id_ =
         env_->scheduler()->addTimedEventRunEvery(timer_event_, interval);
 }

@@ -1,4 +1,4 @@
-#include "AACStreamSender.h"
+#include "AACMediaSink.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -16,36 +16,34 @@ static const uint32_t kAACSampleRate[16] = {97000, 88200, 64000, 48000, 44100,
                                             11025, 8000,  7350, /*reserved */
                                             0,     0,     0};
 
-AACStreamSender* AACStreamSender::createNew(UsageEnvironment* env,
-                                            MediaFileReader* media_reader,
-                                            int sample_rate, int channels) {
-    return new AACStreamSender(env, media_reader, RTP_PAYLOAD_TYPE_AAC,
-                               sample_rate, channels);
+AACMediaSink* AACMediaSink::createNew(UsageEnvironment* env,
+                                      MediaSource* media_source,
+                                      int sample_rate, int channels) {
+    return new AACMediaSink(env, media_source, RTP_PAYLOAD_TYPE_AAC,
+                            sample_rate, channels);
 }
 
-AACStreamSender::AACStreamSender(UsageEnvironment* env,
-                                 MediaFileReader* media_reader,
-                                 int payload_type, int sample_rate,
-                                 int channels)
-    : StreamSender(env, media_reader, payload_type),
+AACMediaSink::AACMediaSink(UsageEnvironment* env, MediaSource* media_source,
+                           int payload_type, int sample_rate, int channels)
+    : Sink(env, media_source, payload_type),
       sample_rate_(sample_rate),
       channels_(channels),
       fps_(1.0 * sample_rate / kAACFrameSize) {
-    LOGI("AACStreamSender()");
+    LOGI("AACMediaSink()");
     marker_ = 1;
     runEvery(1000 / fps_);
 }
 
-AACStreamSender::~AACStreamSender() { LOGI("~AACStreamSender()"); }
+AACMediaSink::~AACMediaSink() { LOGI("~AACMediaSink()"); }
 
-std::string AACStreamSender::getMediaDescription(uint16_t port) {
+std::string AACMediaSink::getMediaDescription(uint16_t port) {
     char buf[100] = {0};
     sprintf(buf, "m=audio %hu RTP/AVP %d", port, payload_type_);
 
     return buf;
 }
 
-std::string AACStreamSender::getAttribute() {
+std::string AACMediaSink::getAttribute() {
     char buf[500] = {0};
     sprintf(buf, "a=rtpmap:97 mpeg4-generic/%u/%u\r\n", sample_rate_,
             channels_);
@@ -77,7 +75,7 @@ std::string AACStreamSender::getAttribute() {
     return buf;
 }
 
-void AACStreamSender::sendFrame(MediaFrame* frame) {
+void AACMediaSink::sendFrame(MediaFrame* frame) {
     RtpHeader* rtp_header = rtp_packet_.rtp_header;
     int frame_size = frame->size - 7;  // 去掉aac头部
 

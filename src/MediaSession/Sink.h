@@ -1,5 +1,5 @@
-#ifndef STREAM_SENDER_H
-#define STREAM_SENDER_H
+#ifndef SINK_H
+#define SINK_H
 #include <stdint.h>
 
 #include <functional>
@@ -7,10 +7,10 @@
 
 #include "Event.h"
 #include "UsageEnvironment.h"
-#include "MediaFileReader.h"
+#include "MediaSource.h"
 #include "Rtp.h"
 
-class StreamSender {
+class Sink {
    public:
     enum PacketType {
         UNKNOWN = -1,
@@ -20,8 +20,8 @@ class StreamSender {
     using SessionSendPacketCallback =
         std::function<void(RtpPacket*, PacketType)>;
 
-    StreamSender(UsageEnvironment* env, MediaFileReader* media_reader, int payload_type);
-    virtual ~StreamSender();
+    Sink(UsageEnvironment* env, MediaSource* media_source, int payload_type);
+    virtual ~Sink();
 
     void stopTimerEvent();
 
@@ -41,7 +41,7 @@ class StreamSender {
 
    protected:
     UsageEnvironment* env_;
-    MediaFileReader* media_reader_;
+    MediaSource* media_source_;
     SessionSendPacketCallback session_send_packet_;
 
     // RTP header
@@ -60,4 +60,4 @@ class StreamSender {
     Timer::TimerId timer_id_;  // runEvery()之后获取
 };
 
-#endif  // STREAM_SENDER_H
+#endif  // SINK_H

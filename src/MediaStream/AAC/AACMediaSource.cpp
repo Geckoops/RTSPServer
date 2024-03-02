@@ -1,16 +1,16 @@
-#include "AACFileReader.h"
+#include "AACMediaSource.h"
 
 #include <string.h>
 
 #include "Log.h"
 
-AACFileReader* AACFileReader::createNew(UsageEnvironment* env,
-                                        const std::string& file) {
-    return new AACFileReader(env, file);
+AACMediaSource* AACMediaSource::createNew(UsageEnvironment* env,
+                                          const std::string& file) {
+    return new AACMediaSource(env, file);
 }
 
-AACFileReader::AACFileReader(UsageEnvironment* env, const std::string& file)
-    : MediaFileReader(env) {
+AACMediaSource::AACMediaSource(UsageEnvironment* env, const std::string& file)
+    : MediaSource(env) {
     file_name_ = file;
     file_ = fopen(file.c_str(), "rb");
     if (file_ == nullptr) {
@@ -23,12 +23,12 @@ AACFileReader::AACFileReader(UsageEnvironment* env, const std::string& file)
     }
 }
 
-AACFileReader::~AACFileReader() {
+AACMediaSource::~AACMediaSource() {
     LOGI("File closed: %s", file_name_.c_str());
     fclose(file_);
 }
 
-void AACFileReader::handleTask() {
+void AACMediaSource::handleTask() {
     std::lock_guard<std::mutex> lck(mtx_);
 
     if (frame_input_queue_.empty()) {
@@ -46,8 +46,8 @@ void AACFileReader::handleTask() {
     frame_output_queue_.push(frame);
 }
 
-bool AACFileReader::parseAdtsHeader(uint8_t* in,
-                                    struct AdtsHeader* adts_header) {
+bool AACMediaSource::parseAdtsHeader(uint8_t* in,
+                                     struct AdtsHeader* adts_header) {
     memset(adts_header, 0, sizeof(*adts_header));
 
     if ((in[0] == 0xFF) && ((in[1] & 0xF0) == 0xF0)) {
@@ -81,7 +81,7 @@ bool AACFileReader::parseAdtsHeader(uint8_t* in,
     }
 }
 
-int AACFileReader::getFrameFromAACFile(uint8_t* buf, unsigned int size) {
+int AACMediaSource::getFrameFromAACFile(uint8_t* buf, unsigned int size) {
     if (file_ == nullptr) {
         LOGE("Read %s error, file not open", file_name_.c_str());
         return -1;

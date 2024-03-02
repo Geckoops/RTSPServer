@@ -44,8 +44,8 @@ MediaSession::~MediaSession() {
     }
     for (int i = 0; i < MEDIA_MAX_TRACK_NUM; ++i) {
         if (tracks_[i].is_alive) {
-            StreamSender* stream_sender = tracks_[i].stream_sender;
-            delete stream_sender;
+            Sink* sink = tracks_[i].sink;
+            delete sink;
         }
     }
 }
@@ -82,7 +82,7 @@ std::string MediaSession::generateSDPDescription() {
         }
 
         snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s\r\n",
-                 tracks_[i].stream_sender->getMediaDescription(port).c_str());
+                 tracks_[i].sink->getMediaDescription(port).c_str());
 
         if (isStartMulticast())
             snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
@@ -92,7 +92,7 @@ std::string MediaSession::generateSDPDescription() {
                      "c=IN IP4 %s\r\n", ip.c_str());
 
         snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s\r\n",
-                 tracks_[i].stream_sender->getAttribute().c_str());
+                 tracks_[i].sink->getAttribute().c_str());
 
         snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
                  "a=control:track%d\r\n", tracks_[i].track_id);
@@ -112,21 +112,21 @@ MediaSession::Track* MediaSession::getTrack(MediaSession::TrackId track_id) {
     return nullptr;
 }
 
-bool MediaSession::addStreamSender(MediaSession::TrackId track_id,
-                                   StreamSender* stream_sender) {
+bool MediaSession::addSink(MediaSession::TrackId track_id,
+                                   Sink* sink) {
     Track* track = getTrack(track_id);
 
     if (track == nullptr) {
         return false;
     }
 
-    track->stream_sender = stream_sender;
+    track->sink = sink;
     track->is_alive = true;
 
-    stream_sender->setSessionCb(
+    sink->setSessionCb(
         [this, track](RtpPacket* rtp_packet,
-                      StreamSender::PacketType packet_type) {
-            if (packet_type == StreamSender::PacketType::RTPPACKET) {
+                      Sink::PacketType packet_type) {
+            if (packet_type == Sink::PacketType::RTPPACKET) {
                 this->handleSendRtpPacket(track, rtp_packet);
             }
         });
