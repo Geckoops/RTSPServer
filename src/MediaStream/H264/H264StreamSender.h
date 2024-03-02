@@ -19,9 +19,15 @@ class H264StreamSender : public StreamSender {
     virtual void sendFrame(MediaFrame* frame);
 
    private:
+    std::string getSPSInfo();
+    std::string getPPSInfo();
+
+   private:
     RtpPacket rtp_packet_;
     int clock_rate_;
     double fps_;
+    std::string sps_info_;
+    std::string pps_info_;
 };
 
 #endif  // H264STREAMSENDER_H

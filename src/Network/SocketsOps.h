@@ -47,6 +47,7 @@ int recvfrom(int sockfd, void* buf, int size, struct sockaddr* srcAddr);
 void initNetWork();
 bool bind(int sockfd, std::string ip, uint16_t port);
 void close(int sockfd);
+std::string transfromToBase64(const uint8_t* data, int size);
 
 std::string getLocalIp();
 

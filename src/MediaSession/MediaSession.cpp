@@ -54,7 +54,7 @@ std::string MediaSession::generateSDPDescription() {
     if (!sdp_.empty()) {
         return sdp_;
     }
-    std::string ip = "0.0.0.0";
+    std::string ip = sockets::getLocalIp();
     char buf[2048] = {0};
 
     snprintf(buf, sizeof(buf),
@@ -89,7 +89,7 @@ std::string MediaSession::generateSDPDescription() {
                      "c=IN IP4 %s/255\r\n", getMulticastDestAddr().c_str());
         else
             snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-                     "c=IN IP4 0.0.0.0\r\n");
+                     "c=IN IP4 %s\r\n", ip.c_str());
 
         snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s\r\n",
                  tracks_[i].stream_sender->getAttribute().c_str());

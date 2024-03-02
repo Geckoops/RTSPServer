@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "Log.h"
+#include "SocketsOps.h"
 
 // 时钟频率
 static const int kH264ClockRate = 90000;
@@ -33,9 +34,11 @@ std::string H264StreamSender::getMediaDescription(uint16_t port) {
 }
 
 std::string H264StreamSender::getAttribute() {
-    char buf[100];
+    char buf[200] = {0};
     sprintf(buf, "a=rtpmap:%d H264/%d\r\n", payload_type_, clock_rate_);
-    sprintf(buf + strlen(buf), "a=framerate:%.3lf", fps_);
+    sprintf(buf + strlen(buf), "a=framerate:%.3lf\r\n", fps_);
+    sprintf(buf + strlen(buf), "a=fmtp:96 sprop-parameter-sets=%s,%s",
+            getSPSInfo().c_str(), getPPSInfo().c_str());
 
     return buf;
 }
@@ -115,4 +118,18 @@ void H264StreamSender::sendFrame(MediaFrame* frame) {
     }
 
     timestamp_ += clock_rate_ / fps_;
+}
+
+std::string H264StreamSender::getSPSInfo() {
+    if(sps_info_.empty()) {
+        return "Z2QAH6xyiQNg95//wKAAn9qAgICgAAB9IAAXcBHjBhRM";
+    }
+    return sps_info_;
+}
+
+std::string H264StreamSender::getPPSInfo() {
+    if(pps_info_.empty()) {
+        return "aOk7yw==";
+    }
+    return pps_info_;
 }
