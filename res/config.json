@@ -1,0 +1,26 @@
+{
+    "media": [
+        {
+            "name": "fu",
+            "session_name": "test",
+            "enabled": true,
+            "encrypted": false,
+            "secret_key": "asd",
+            "track": [
+                {
+                    "type": "aac",
+                    "path": "../res/output.aac",
+                    "sample_rate": 48000,
+                    "channels": 2
+                },
+                {
+                    "type": "h264",
+                    "path": "../res/output.h264",
+                    "fps": 23.976,
+                    "pps": "aOk7yw==",
+                    "sps": "Z2QAH6xyiQNg95//wKAAn9qAgICgAAB9IAAXcBHjBhRM"
+                }
+            ]
+        }
+    ]
+}

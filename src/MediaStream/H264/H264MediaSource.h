@@ -4,16 +4,21 @@
 #include <string>
 
 #include "MediaSource.h"
+#include "Encryptor.h"
+#include <memory>
 
 class H264MediaSource : public MediaSource {
    public:
     static H264MediaSource* createNew(UsageEnvironment* env,
-                                      const std::string& file);
+                                      const std::string& file,
+                                      const std::string& secret_key = "");
 
-    H264MediaSource(UsageEnvironment* env, const std::string& file);
     virtual ~H264MediaSource();
 
    protected:
+    H264MediaSource(UsageEnvironment* env, const std::string& file,
+                    const std::string& secret_key);
+
     virtual void handleTask();
 
    private:
@@ -21,6 +26,8 @@ class H264MediaSource : public MediaSource {
 
    private:
     FILE* file_;
+    bool encrypt_;
+    std::shared_ptr<Encryptor> encryptor_;
 };
 
 #endif  // H264MEDIASOURCE_H

@@ -135,7 +135,7 @@ bool TimerManager::removeTimer(Timer::TimerId timer_id) {
     auto it = timers_.find(timer_id);
     if (it != timers_.end()) {
         timers_.erase(timer_id);
-        // TODO 还需要删除mEvents的事件
+        // TODO 还需要删除events_的事件
     }
 
     modifyTimeout();

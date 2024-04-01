@@ -19,7 +19,7 @@ class EventScheduler {
 
    public:
     bool addTriggerEvent(TriggerEvent* event);
-    Timer::TimerId addTimedEventRunAfater(TimerEvent* event,
+    Timer::TimerId addTimedEventRunAfter(TimerEvent* event,
                                           Timer::TimeInterval delay);
     Timer::TimerId addTimedEventRunAt(TimerEvent* event, Timer::Timestamp when);
     Timer::TimerId addTimedEventRunEvery(TimerEvent* event,

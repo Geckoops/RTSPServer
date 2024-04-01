@@ -22,8 +22,8 @@ class Timer {
 
    private:
     friend class TimerManager;
-    Timer(TimerEvent* event, Timestamp timestamp, TimeInterval timeInterval,
-          TimerId timerId);
+    Timer(TimerEvent* event, Timestamp timestamp, TimeInterval time_interval,
+          TimerId timer_id);
 
    private:
     bool handleEvent();
@@ -45,8 +45,8 @@ class TimerManager {
     ~TimerManager();
 
     Timer::TimerId addTimer(TimerEvent* event, Timer::Timestamp timestamp,
-                            Timer::TimeInterval timeInterval);
-    bool removeTimer(Timer::TimerId timerId);
+                            Timer::TimeInterval time_interval);
+    bool removeTimer(Timer::TimerId timer_id);
 
    private:
     void handleRead();

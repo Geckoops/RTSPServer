@@ -8,17 +8,24 @@ static inline bool startCode3(uint8_t* buf);
 static inline bool startCode4(uint8_t* buf);
 
 H264MediaSource* H264MediaSource::createNew(UsageEnvironment* env,
-                                            const std::string& file) {
-    return new H264MediaSource(env, file);
+                                            const std::string& file,
+                                            const std::string& secret_key) {
+    return new H264MediaSource(env, file, secret_key);
 }
 
-H264MediaSource::H264MediaSource(UsageEnvironment* env, const std::string& file)
+H264MediaSource::H264MediaSource(UsageEnvironment* env, const std::string& file,
+                                 const std::string& secret_key)
     : MediaSource(env) {
     file_name_ = file;
     file_ = fopen(file.c_str(), "rb");
     if (file_ == nullptr) {
         LOGE("Open H264 file:%s error", file.c_str());
         exit(-1);
+    }
+
+    if (!secret_key.empty()) {
+        encrypt_ = true;
+        encryptor_.reset(Encryptor::createNew(secret_key));
     }
 
     for (int i = 0; i < DEFAULT_FRAME_NUM; ++i) {
@@ -133,6 +140,9 @@ int H264MediaSource::getFrameFromH264File(uint8_t* frame, unsigned int size) {
         LOGE("Read %s error, no next_start_code, r=%d", file_name_.c_str(), r);
     } else {
         frame_size = (next_start_code - frame);
+        if (encrypt_) {  // 从第二个字节开始加密
+            encryptor_->xorBuffers(frame + 1, frame_size - 1);
+        }
         fseek(file_, frame_size - r, SEEK_CUR);
     }
     return frame_size;

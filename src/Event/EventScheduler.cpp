@@ -57,7 +57,7 @@ bool EventScheduler::addTriggerEvent(TriggerEvent* event) {
     return true;
 }
 
-Timer::TimerId EventScheduler::addTimedEventRunAfater(
+Timer::TimerId EventScheduler::addTimedEventRunAfter(
     TimerEvent* event, Timer::TimeInterval delay) {
     Timer::Timestamp timestamp = Timer::getCurTime();
     timestamp += delay;

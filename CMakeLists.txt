@@ -15,17 +15,18 @@ file(GLOB SRC_MEDIA_STREAM_H264 src/MediaStream/H264/*.cpp)
 file(GLOB SRC_MEDIA_STREAM_AAC src/MediaStream/AAC/*.cpp)
 file(GLOB SRC_MEDIA_SESSION src/MediaSession/*.cpp)
 file(GLOB SRC_ENVIRONMENT src/Environment/*.cpp)
+file(GLOB SRC_ENCRYPTION src/Encryption/*.cpp)
 file(GLOB SRC_NETWORK src/Network/*.cpp)
 file(GLOB SRC_THREAD src/Thread/*.cpp)
 file(GLOB SRC_EVENT src/Event/*.cpp)
 file(GLOB SRC_RTSP src/Rtsp/*.cpp)
-
 
 add_executable(${PROJECT_NAME}
     ${SRC_MEDIA_STREAM_H264}
     ${SRC_MEDIA_STREAM_AAC}
     ${SRC_MEDIA_SESSION}
     ${SRC_ENVIRONMENT}
+    ${SRC_ENCRYPTION}
     ${SRC_NETWORK}
     ${SRC_THREAD}
     ${SRC_EVENT}
@@ -35,16 +36,24 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     include
+    libs/jsoncpp/include
     src/MediaStream/H264
     src/MediaStream/AAC
     src/MediaSession
     src/Environment
+    src/Encryption
     src/Network
     src/Thread
     src/Event
     src/Rtsp
+    
+)
+
+target_link_directories(${PROJECT_NAME} PRIVATE
+    libs/jsoncpp/lib
 )
 
 target_link_libraries(${PROJECT_NAME}
+    jsoncpp
     ws2_32
 )

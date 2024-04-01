@@ -23,7 +23,7 @@ class AACMediaSource : public MediaSource {
         unsigned int id;  // 1 bit MPEG 标示符， 0 for MPEG-4，1 for MPEG-2
         unsigned int layer;              // 2 bit 总是'00'
         unsigned int protection_absent;  // 1 bit 1表示没有crc，0表示有crc
-        unsigned int profile;            // 1 bit 表示使用哪个级别的AAC
+        unsigned int profile;            // 2 bit 表示使用哪个级别的AAC
         unsigned int sampling_freq_index;  // 4 bit 表示使用的采样频率
         unsigned int private_bit;          // 1 bit 未使用
         unsigned int channel_cfg;          // 3 bit 表示声道数
